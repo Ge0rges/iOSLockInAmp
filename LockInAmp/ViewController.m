@@ -93,11 +93,6 @@ double referenceFrequency = 12;
 }
 
 #pragma mark - Audio Processing
-/**
- The microphone data represented as non-interleaved float arrays useful for:
- - Creating real-time waveforms using EZAudioPlot or EZAudioPlotGL
- - Creating any number of custom visualizations that utilize audio!
- */
 -(void)microphone:(EZMicrophone *)microphone hasAudioReceived:(float **)buffer withBufferSize:(UInt32)bufferSize withNumberOfChannels:(UInt32)numberOfChannels {
     // 1. Gets data from microphone
     NSLog(@"buffer[0]: %@ bufferSize: %u numerOfChannels: %u", buffer[0], (unsigned int)bufferSize, (unsigned int)numberOfChannels);
