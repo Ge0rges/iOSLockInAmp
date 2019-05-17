@@ -21,6 +21,7 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="pgz-Pd-oan">
                                 <rect key="frame" x="202" y="453" width="10" height="409"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="sectionIndexBackgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <sections/>
                                 <connections>
                                     <outlet property="dataSource" destination="BYZ-38-t0r" id="FUP-oa-zf0"/>
@@ -33,6 +34,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="10" id="IxE-cN-OsA"/>
                                 </constraints>
+                                <color key="sectionIndexBackgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <sections/>
                                 <connections>
                                     <outlet property="dataSource" destination="BYZ-38-t0r" id="Q7T-gW-hRY"/>
@@ -40,7 +42,7 @@
                                 </connections>
                             </tableView>
                         </subviews>
-                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="pgz-Pd-oan" firstAttribute="width" secondItem="ijF-L3-RMd" secondAttribute="width" id="0O6-Gc-S8c"/>
                             <constraint firstItem="ijF-L3-RMd" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="37T-2C-N9o"/>

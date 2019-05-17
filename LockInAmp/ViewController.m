@@ -75,9 +75,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger rows = floor(tableViewHeight/rowHeight);
-    if (tableView == self.dotGraphReal) {
-        rows = ceil(tableViewHeight/rowHeight);
-    }
     return rows;
 }
 
@@ -96,7 +93,7 @@
             cell.backgroundColor = UIColor.greenColor;
             
         } else {
-            cell.backgroundColor = UIColor.whiteColor;
+            cell.backgroundColor = UIColor.blackColor;
         }
         
     } else if (tableView == self.dotGraphImaginary && self.dotGraphImaginaryArray.count > indexPath.row) {
@@ -104,7 +101,7 @@
             cell.backgroundColor = UIColor.greenColor;
             
         } else {
-            cell.backgroundColor = UIColor.whiteColor;
+            cell.backgroundColor = UIColor.blackColor;
         }
     }
     
