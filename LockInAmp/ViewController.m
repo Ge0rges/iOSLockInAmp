@@ -106,9 +106,10 @@ double referenceFrequency = 12;
     // NsMutableArray *S = [NsMutableArray new]
     // complex double S[bufferSize];
     for(UInt32 i = 0; i < bufferSize; i++) {
-        double arg = Fc / Fs * self.idx * 2 * M_PI;
-        val = val * ALPHA + (sin(arg) + cos(arg) * I) * (*buffer)[i] * (1 - ALPHA);
+        double arg = Fc / Fs * (self.idx + i) * 2 * M_PI;
+        self.val = self.val * ALPHA + (sin(arg) + cos(arg) * I) * (*buffer)[i] * (1 - ALPHA);
     }
+    self.idx += bufferSize;
     
     // 2. Implements lock in amplifier by:
     //  2a. Multiplying microphone with reference signal
