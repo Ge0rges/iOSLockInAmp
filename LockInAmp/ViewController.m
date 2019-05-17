@@ -126,8 +126,10 @@ double const ALPHA = 0.99;
     self.imaginaryIndex = MAX(0, self.imaginaryIndex);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.realView setFrame:CGRectMake(self.realView.frame.origin.x, self.realIndex, indicatorSize, indicatorSize)];
-        [self.imaginaryView setFrame:CGRectMake(self.imaginaryView.frame.origin.x, self.imaginaryIndex, indicatorSize, indicatorSize)];
+        [UIView animateWithDuration:0.1 animations:^{
+            [self.realView setFrame:CGRectMake(self.realView.frame.origin.x, self.realIndex, indicatorSize, indicatorSize)];
+            [self.imaginaryView setFrame:CGRectMake(self.imaginaryView.frame.origin.x, self.imaginaryIndex, indicatorSize, indicatorSize)];
+        } completion:nil];
     });
 }
 
