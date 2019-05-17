@@ -11,27 +11,24 @@
 
 #import "ViewController.h"
 
-#define numberOfRows floor(tableViewHeight/rowHeight)
-
-int const rowHeight = 10;
+int const indicatorSize = 10;
 
 double const Fs = 44100.0;
 double const Fc = 440.0;
 double const ALPHA = 0.99;
 
-@interface ViewController () <UITableViewDelegate, UITableViewDataSource, EZMicrophoneDelegate, EZOutputDataSource, EZOutputDelegate> {
-    NSInteger tableViewHeight;
+@interface ViewController () <EZMicrophoneDelegate, EZOutputDataSource, EZOutputDelegate> {
+    NSInteger viewheight;
 
     UInt32 idx;
 
     complex double val;
 }
 
+@property (nonatomic, strong) UIView *realView;
+@property (nonatomic, strong) UIView *imaginaryView;
+
 @property (nonatomic, strong) EZMicrophone *microphone;
-
-@property (strong, nonatomic) IBOutlet UITableView *dotGraphReal;
-@property (strong, nonatomic) IBOutlet UITableView *dotGraphImaginary;
-
 @property (nonatomic, strong) EZOutput *output;
 
 @property (nonatomic) double amplitude;
@@ -51,8 +48,17 @@ double const ALPHA = 0.99;
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    tableViewHeight = self.dotGraphReal.frame.size.height;
-
+    viewheight = self.view.frame.size.height;
+    
+    // Setup views
+    self.realView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - indicatorSize/2, 20, indicatorSize, indicatorSize)];
+    self.imaginaryView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 + indicatorSize/2, 20, indicatorSize, indicatorSize)];
+    self.realView.backgroundColor = UIColor.redColor;
+    self.imaginaryView.backgroundColor = UIColor.greenColor;
+    
+    [self.view addSubview:self.realView];
+    [self.view addSubview:self.imaginaryView];
+    
     // Setup AudioSession
     AVAudioSession *session = [AVAudioSession sharedInstance];
     NSError *error;
@@ -81,38 +87,8 @@ double const ALPHA = 0.99;
     
     NSArray *outputs = [EZAudioDevice outputDevices];
     [self.output setDevice:[outputs firstObject]];
-    [self.output startPlayback];
+    //[self.output startPlayback];
 
-}
-
-#pragma mark - Dot Graph Table View
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return numberOfRows;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return rowHeight;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-    }
-    
-    if (tableView == self.dotGraphReal) {
-        cell.backgroundColor = (indexPath.row == self.realIndex) ? UIColor.redColor : UIColor.blackColor;
-    }
-    
-    if (tableView == self.dotGraphImaginary) {
-        cell.backgroundColor = (indexPath.row == self.imaginaryIndex) ? UIColor.greenColor : UIColor.blackColor;
-    }
-    
-    return cell;
 }
 
 #pragma mark - Audio Processing
@@ -123,9 +99,6 @@ double const ALPHA = 0.99;
     //  2b. Pass result through low pass filter
     // 3. Mutate dotGraphArray with True where points should be shown on the dot graph
     // 4. Calls [self.dotGraph reloadData]; at end of function to update the dot graph
-    
-    NSInteger oldRealIndex = self.realIndex;
-    NSInteger oldImaginaryIndex = self.imaginaryIndex;
     
     for(UInt32 i = 0; i < bufferSize; i++) {
         double arg = Fc / Fs * (idx + i) * 2 * M_PI;
@@ -140,8 +113,8 @@ double const ALPHA = 0.99;
     float oldMax = 0.15;
     float oldMin = -0.15;
     float oldRange = (oldMax - oldMin);
-    float newMax = numberOfRows-1;
-    float newMin = 0;
+    float newMax = viewheight-40-indicatorSize;
+    float newMin = 20;
     float newRange = (newMax - newMin);
     
     self.realIndex = floor((((realVal - oldMin) * newRange) / oldRange) + newMin);
@@ -153,15 +126,8 @@ double const ALPHA = 0.99;
     self.imaginaryIndex = MAX(0, self.imaginaryIndex);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.dotGraphReal reloadRowsAtIndexPaths:@[
-                                                    [NSIndexPath indexPathForRow:self.realIndex inSection:0],
-                                                    [NSIndexPath indexPathForRow:oldRealIndex inSection:0]]
-                                 withRowAnimation:UITableViewRowAnimationNone];
-        
-        [self.dotGraphImaginary reloadRowsAtIndexPaths:@[
-                                                    [NSIndexPath indexPathForRow:self.imaginaryIndex inSection:0],
-                                                    [NSIndexPath indexPathForRow:oldImaginaryIndex inSection:0]]
-                                 withRowAnimation:UITableViewRowAnimationNone];
+        [self.realView setFrame:CGRectMake(self.realView.frame.origin.x, self.realIndex, indicatorSize, indicatorSize)];
+        [self.imaginaryView setFrame:CGRectMake(self.imaginaryView.frame.origin.x, self.imaginaryIndex, indicatorSize, indicatorSize)];
     });
 }
 
