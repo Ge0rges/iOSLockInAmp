@@ -17,6 +17,8 @@ double referenceFrequency = 12;
 @property (nonatomic, strong) EZMicrophone *microphone;
 @property (strong, nonatomic) IBOutlet UITableView *dotGraph;
 @property (strong, nonatomic) NSMutableArray<NSNumber *> *dotGraphArray;
+@property UInt32 idx
+@property complex double val
 
 @end
 
@@ -92,10 +94,21 @@ double referenceFrequency = 12;
     }
 }
 
+#import <complex.h>
+#define Fs 44100.0
+#define Fc 12.0
+#define ALPHA 0.99
 #pragma mark - Audio Processing
 -(void)microphone:(EZMicrophone *)microphone hasAudioReceived:(float **)buffer withBufferSize:(UInt32)bufferSize withNumberOfChannels:(UInt32)numberOfChannels {
     // 1. Gets data from microphone
     NSLog(@"buffer[0]: %@ bufferSize: %u numerOfChannels: %u", buffer[0], (unsigned int)bufferSize, (unsigned int)numberOfChannels);
+    
+    // NsMutableArray *S = [NsMutableArray new]
+    // complex double S[bufferSize];
+    for(UInt32 i = 0; i < bufferSize; i++) {
+        double arg = Fc / Fs * self.idx * 2 * M_PI;
+        val = val * ALPHA + (sin(arg) + cos(arg) * I) * (*buffer)[i] * (1 - ALPHA);
+    }
     
     // 2. Implements lock in amplifier by:
     //  2a. Multiplying microphone with reference signal
