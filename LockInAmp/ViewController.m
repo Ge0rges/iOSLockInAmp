@@ -137,10 +137,10 @@ double const ALPHA = 0.99;
     double realVal = creal(val);
     double imaginaryVal = cimag(val);
     
-    float oldMax = 0.14;
-    float oldMin = -0.14;
+    float oldMax = 0.15;
+    float oldMin = -0.15;
     float oldRange = (oldMax - oldMin);
-    float newMax = numberOfRows;
+    float newMax = numberOfRows-1;
     float newMin = 0;
     float newRange = (newMax - newMin);
     
@@ -153,11 +153,15 @@ double const ALPHA = 0.99;
     self.imaginaryIndex = MAX(0, self.imaginaryIndex);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.dotGraphReal reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:oldRealIndex inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-        [self.dotGraphImaginary reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:oldImaginaryIndex inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        [self.dotGraphReal reloadRowsAtIndexPaths:@[
+                                                    [NSIndexPath indexPathForRow:self.realIndex inSection:0],
+                                                    [NSIndexPath indexPathForRow:oldRealIndex inSection:0]]
+                                 withRowAnimation:UITableViewRowAnimationNone];
         
-        [self.dotGraphReal reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.realIndex inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-        [self.dotGraphImaginary reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.imaginaryIndex inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        [self.dotGraphImaginary reloadRowsAtIndexPaths:@[
+                                                    [NSIndexPath indexPathForRow:self.imaginaryIndex inSection:0],
+                                                    [NSIndexPath indexPathForRow:oldImaginaryIndex inSection:0]]
+                                 withRowAnimation:UITableViewRowAnimationNone];
     });
 }
 
