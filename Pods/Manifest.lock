@@ -1,0 +1,24 @@
+PODS:
+  - EZAudio (1.1.5):
+    - EZAudio/Full (= 1.1.5)
+  - EZAudio/Core (1.1.5)
+  - EZAudio/Full (1.1.5):
+    - EZAudio/Core
+    - TPCircularBuffer (= 1.1)
+  - TPCircularBuffer (1.1)
+
+DEPENDENCIES:
+  - EZAudio
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - EZAudio
+    - TPCircularBuffer
+
+SPEC CHECKSUMS:
+  EZAudio: 3b1cb4b6d7ebca68f0c2478576d75940aad4aa99
+  TPCircularBuffer: 4960a919e667280f7f38963d771f45871b64fe62
+
+PODFILE CHECKSUM: 9869ff3a96a4e0d2596e97e7431df09adfcda052
+
+COCOAPODS: 1.5.3
