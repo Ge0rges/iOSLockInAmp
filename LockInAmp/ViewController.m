@@ -105,7 +105,7 @@ double const ALPHA = 0.99;
     }
     
     if (tableView == self.dotGraphReal) {
-        cell.backgroundColor = (indexPath.row == self.realIndex) ? UIColor.greenColor : UIColor.blackColor;
+        cell.backgroundColor = (indexPath.row == self.realIndex) ? UIColor.redColor : UIColor.blackColor;
     }
     
     if (tableView == self.dotGraphImaginary) {
