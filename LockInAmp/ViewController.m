@@ -17,11 +17,8 @@ double const Fs = 44100.0;
 double const Fc = 440.0;
 double const ALPHA = 0.99;
 
-@interface ViewController () <EZMicrophoneDelegate, EZOutputDataSource, EZOutputDelegate> {
+@interface ViewController () <EZMicrophoneDelegate, EZOutputDataSource> {
     NSInteger viewheight;
-
-    UInt32 idx;
-
     complex double val;
 }
 
@@ -80,14 +77,13 @@ double const ALPHA = 0.99;
     // Setup output
     AudioStreamBasicDescription inputFormat = [EZAudioUtilities monoFloatFormatWithSampleRate:Fs];
     self.output = [EZOutput outputWithDataSource:self inputFormat:inputFormat];
-    [self.output setDelegate:self];
-    self.frequency = Fc-1;
+    self.frequency = Fc;
     self.sampleRate = inputFormat.mSampleRate;
     self.amplitude = 0.80;
     
     NSArray *outputs = [EZAudioDevice outputDevices];
     [self.output setDevice:[outputs firstObject]];
-    //[self.output startPlayback];
+    [self.output startPlayback];
 
 }
 
@@ -101,12 +97,10 @@ double const ALPHA = 0.99;
     // 4. Calls [self.dotGraph reloadData]; at end of function to update the dot graph
     
     for(UInt32 i = 0; i < bufferSize; i++) {
-        double arg = Fc / Fs * (idx + i) * 2 * M_PI;
+        double arg = Fc / Fs * i * 2 * M_PI + self.theta;
         val = val * ALPHA + (sin(arg) + cos(arg) * I) * (*buffer)[i] * (1 - ALPHA);
     }
     
-    idx += bufferSize;
-
     double realVal = creal(val);
     double imaginaryVal = cimag(val);
     
@@ -148,10 +142,6 @@ double const ALPHA = 0.99;
     }
     
     return noErr;
-}
-
-- (void)output:(EZOutput *)output playedAudio:(float **)buffer withBufferSize:(UInt32)bufferSize withNumberOfChannels:(UInt32)numberOfChannels {
-    return;
 }
 
 @end
