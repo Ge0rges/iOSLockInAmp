@@ -51,10 +51,10 @@ double const ALPHA = 0.99;
     
     viewheight = self.view.frame.size.height;
     calibrations = 0;
-    oldMaxR = 0;
-    oldMinR = 0;
-    oldMaxI = 0;
-    oldMinI = 0;
+    oldMaxR = FLT_MIN;
+    oldMinR = FLT_MAX;
+    oldMaxI = FLT_MIN;
+    oldMinI = FLT_MAX;
     
     // Setup views
     self.realView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - indicatorSize/2, 20, indicatorSize, indicatorSize)];
