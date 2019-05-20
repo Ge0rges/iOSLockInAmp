@@ -16,6 +16,7 @@ int const indicatorSize = 10;
 double const Fs = 44100.0;
 double const Fc = 440.0*5;
 double const ALPHA = 0.99;
+float const indicatorYMargin = 40;
 
 @interface ViewController () <EZMicrophoneDelegate, EZOutputDataSource> {
     NSInteger viewheight;
@@ -57,8 +58,8 @@ double const ALPHA = 0.99;
     oldMinI = FLT_MAX;
     
     // Setup views
-    self.realView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - indicatorSize/2, 20, indicatorSize, indicatorSize)];
-    self.imaginaryView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 + indicatorSize/2, 20, indicatorSize, indicatorSize)];
+    self.realView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - indicatorSize/2, indicatorYMargin, indicatorSize, indicatorSize)];
+    self.imaginaryView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 + indicatorSize/2, indicatorYMargin, indicatorSize, indicatorSize)];
     self.realView.backgroundColor = UIColor.redColor;
     self.imaginaryView.backgroundColor = UIColor.greenColor;
     
@@ -130,8 +131,8 @@ double const ALPHA = 0.99;
     // Scale val to the height of the screen
     float oldRangeR = (oldMaxR - oldMinR);
     float oldRangeI = (oldMaxI - oldMinI);
-    float newMax = viewheight-40-indicatorSize;
-    float newMin = 20;
+    float newMax = viewheight-indicatorYMargin*2-indicatorSize;
+    float newMin = indicatorYMargin;
     float newRange = (newMax - newMin);
     
     self.realIndex = floor((((realVal - oldMinR) * newRange) / oldRangeR) + newMin);
