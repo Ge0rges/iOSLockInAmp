@@ -96,14 +96,17 @@ double const ALPHA = 0.99;
     // 3. Mutate dotGraphArray with True where points should be shown on the dot graph
     // 4. Calls [self.dotGraph reloadData]; at end of function to update the dot graph
     
+    // Lock in amp math
     for(UInt32 i = 0; i < bufferSize; i++) {
-        double arg = Fc / Fs * i * 2 * M_PI + self.theta;
+        double arg = Fc / Fs * i * 2 * M_PI + self.theta;// self.theta preserves phase information
         val = val * ALPHA + (sin(arg) + cos(arg) * I) * (*buffer)[i] * (1 - ALPHA);
     }
     
+    // Split val into real and imaginary parts
     double realVal = creal(val);
     double imaginaryVal = cimag(val);
     
+    // Scale val to the height of the screen
     float oldMax = 0.15;
     float oldMin = -0.15;
     float oldRange = (oldMax - oldMin);
@@ -114,12 +117,9 @@ double const ALPHA = 0.99;
     self.realIndex = floor((((realVal - oldMin) * newRange) / oldRange) + newMin);
     self.imaginaryIndex = floor((((imaginaryVal - oldMin) * newRange) / oldRange) + newMin);
     
-    self.realIndex = MIN(self.realIndex, newMax);
-    self.realIndex = MAX(0, self.realIndex);
-    self.imaginaryIndex = MIN(self.imaginaryIndex, newMax);
-    self.imaginaryIndex = MAX(0, self.imaginaryIndex);
-    
+    // On the main queue (UI), animate the indicators.
     dispatch_async(dispatch_get_main_queue(), ^{
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
         [UIView animateWithDuration:0.1 animations:^{
             [self.realView setFrame:CGRectMake(self.realView.frame.origin.x, self.realIndex, indicatorSize, indicatorSize)];
             [self.imaginaryView setFrame:CGRectMake(self.imaginaryView.frame.origin.x, self.imaginaryIndex, indicatorSize, indicatorSize)];
@@ -128,7 +128,7 @@ double const ALPHA = 0.99;
 }
 
 #pragma mark - EZOutput DataSource & Delegate
-- (OSStatus)output:(EZOutput *)output shouldFillAudioBufferList:(AudioBufferList *)audioBufferList withNumberOfFrames:(UInt32)frames timestamp:(const AudioTimeStamp *)timestamp {
+- (OSStatus)output:(EZOutput *)output shouldFillAudioBufferList:(AudioBufferList *)audioBufferList withNumberOfFrames:(UInt32)frames timestamp:(const AudioTimeStamp *)timestamp {// Generate a reference signal at self.frequency
     Float32 *buffer = (Float32 *)audioBufferList->mBuffers[0].mData;
     
     double thetaIncrement = 2.0 * M_PI * self.frequency / Fs;
