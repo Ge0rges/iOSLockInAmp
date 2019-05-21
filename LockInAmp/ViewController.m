@@ -21,6 +21,7 @@ float const indicatorYMargin = 40;
 @interface ViewController () <EZMicrophoneDelegate, EZOutputDataSource> {
     NSInteger viewheight;
     complex double val;
+    double theta;
     
     int calibrations;
     float oldMaxR;
@@ -34,10 +35,6 @@ float const indicatorYMargin = 40;
 
 @property (nonatomic, strong) EZMicrophone *microphone;
 @property (nonatomic, strong) EZOutput *output;
-
-@property (nonatomic) double amplitude;
-@property (nonatomic) double frequency;
-@property (nonatomic) double theta;
 
 @property (nonatomic, nonatomic) NSInteger realIndex;
 @property (nonatomic, nonatomic) NSInteger imaginaryIndex;
@@ -87,8 +84,6 @@ float const indicatorYMargin = 40;
     // Setup output
     AudioStreamBasicDescription inputFormat = [EZAudioUtilities monoFloatFormatWithSampleRate:Fs];
     self.output = [EZOutput outputWithDataSource:self inputFormat:inputFormat];
-    self.frequency = Fc;
-    self.amplitude = 0.80;
     
     NSArray *outputs = [EZAudioDevice outputDevices];
     [self.output setDevice:[outputs firstObject]];
@@ -108,7 +103,7 @@ float const indicatorYMargin = 40;
     
     // Lock in amp math
     for(UInt32 i = 0; i < bufferSize; i++) {
-        double arg = /*Fc2 / Fs **/ Fc / Fs * i * 2 * M_PI + self.theta;// + self.theta2;// self.theta preserves phase information
+        double arg = Fc / Fs * i * 2 * M_PI + theta;// theta preserves phase information
         val = val * ALPHA + (sin(arg) + cos(arg) * I) * (*buffer)[i] * (1 - ALPHA);
     }
     
@@ -123,7 +118,7 @@ float const indicatorYMargin = 40;
         oldMinR = MIN(oldMinR, realVal);
         oldMaxR = MAX(oldMaxR, realVal);
         
-        NSLog(@"calibration %i vals oldMinI: %f oldMaxI: %f oldMinR: %f oldMaxR: %f", calibrations, oldMinI, oldMaxI, oldMinR, oldMaxR);
+        //NSLog(@"calibration %i vals oldMinI: %f oldMaxI: %f oldMinR: %f oldMaxR: %f", calibrations, oldMinI, oldMaxI, oldMinR, oldMaxR);
         calibrations ++;
         return;
     }
@@ -149,16 +144,16 @@ float const indicatorYMargin = 40;
 }
 
 #pragma mark - EZOutput DataSource & Delegate
-- (OSStatus)output:(EZOutput *)output shouldFillAudioBufferList:(AudioBufferList *)audioBufferList withNumberOfFrames:(UInt32)frames timestamp:(const AudioTimeStamp *)timestamp {// Generate a reference signal at self.frequency
+- (OSStatus)output:(EZOutput *)output shouldFillAudioBufferList:(AudioBufferList *)audioBufferList withNumberOfFrames:(UInt32)frames timestamp:(const AudioTimeStamp *)timestamp {// Generate a reference signal at Fc
     Float32 *buffer = (Float32 *)audioBufferList->mBuffers[0].mData;
     
-    double thetaIncrement = 2.0 * M_PI * self.frequency / Fs;
+    double thetaIncrement = 2.0 * M_PI * Fc / Fs;
     
     for (UInt32 frame = 0; frame < frames; frame++) {
-        buffer[frame] = self.amplitude * sin(self.theta);
-        self.theta += thetaIncrement;
-        if (self.theta > 2.0 * M_PI) {
-            self.theta -= 2.0 * M_PI;
+        buffer[frame] = sin(theta);
+        theta += thetaIncrement;
+        if (theta > 2.0 * M_PI) {
+            theta = (theta <= 2.0 * M_PI) ?: 0;
         }
     }
     
