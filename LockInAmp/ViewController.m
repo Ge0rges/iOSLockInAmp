@@ -15,7 +15,7 @@ int const indicatorSize = 10;
 
 double const Fs = 44100.0;
 double const Fc = 440.0*5;
-double const ALPHA = 0.99;
+double const ALPHA = 0.9999;
 float const indicatorYMargin = 40;
 
 @interface ViewController () <EZMicrophoneDelegate, EZOutputDataSource> {
@@ -98,8 +98,8 @@ float const indicatorYMargin = 40;
     // 2. Implements lock in amplifier by:
     //  2a. Multiplying microphone with reference signal
     //  2b. Pass result through low pass filter
-    // 3. Mutate dotGraphArray with True where points should be shown on the dot graph
-    // 4. Calls [self.dotGraph reloadData]; at end of function to update the dot graph
+    // 3. Mutate dot graph indices with True where points should be shown on the dot graph
+    // 4. Moves the indicators at end of function to update the dot graph
     
     // Lock in amp math
     for(UInt32 i = 0; i < bufferSize; i++) {
@@ -126,7 +126,7 @@ float const indicatorYMargin = 40;
     // Scale val to the height of the screen
     float oldRangeR = (oldMaxR - oldMinR);
     float oldRangeI = (oldMaxI - oldMinI);
-    float newMax = viewheight-indicatorYMargin*2-indicatorSize;
+    float newMax = viewheight-2*indicatorYMargin-indicatorSize;
     float newMin = indicatorYMargin;
     float newRange = (newMax - newMin);
     
@@ -135,11 +135,8 @@ float const indicatorYMargin = 40;
     
     // On the main queue (UI), animate the indicators.
     dispatch_async(dispatch_get_main_queue(), ^{
-        //[UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
-        [UIView animateWithDuration:0.1 animations:^{
-            [self.realView setFrame:CGRectMake(self.realView.frame.origin.x, self.realIndex, indicatorSize, indicatorSize)];
-            [self.imaginaryView setFrame:CGRectMake(self.imaginaryView.frame.origin.x, self.imaginaryIndex, indicatorSize, indicatorSize)];
-        } completion:nil];
+        [self.realView setFrame:CGRectMake(self.realView.frame.origin.x, self.realIndex, indicatorSize, indicatorSize)];
+        [self.imaginaryView setFrame:CGRectMake(self.imaginaryView.frame.origin.x, self.imaginaryIndex, indicatorSize, indicatorSize)];
     });
 }
 
