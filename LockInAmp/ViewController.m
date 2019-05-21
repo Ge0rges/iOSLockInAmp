@@ -152,10 +152,7 @@ float const indicatorYMargin = 40;
     for (UInt32 frame = 0; frame < frames; frame++) {
         buffer[frame] = sin(theta);
         theta += thetaIncrement;
-        if (theta > 2.0 * M_PI) {
-            theta -= 2.0 * M_PI;
-        }
-        //theta = (theta > M_2_PI) ? theta - M_2_PI : theta;
+        theta = (theta > 2.0 * M_PI) ? 0 : theta;
     }
     
     return noErr;
