@@ -103,7 +103,7 @@ float const indicatorYMargin = 40;
     
     // Lock in amp math
     for(UInt32 i = 0; i < bufferSize; i++) {
-        double arg = Fc / Fs * i * 2 * M_PI + theta;// theta preserves phase information
+        double arg = Fc / Fs * i * M_PI_2 + theta;// theta preserves phase information
         val = val * ALPHA + (sin(arg) + cos(arg) * I) * (*buffer)[i] * (1 - ALPHA);
     }
     
@@ -147,12 +147,12 @@ float const indicatorYMargin = 40;
 - (OSStatus)output:(EZOutput *)output shouldFillAudioBufferList:(AudioBufferList *)audioBufferList withNumberOfFrames:(UInt32)frames timestamp:(const AudioTimeStamp *)timestamp {// Generate a reference signal at Fc
     Float32 *buffer = (Float32 *)audioBufferList->mBuffers[0].mData;
     
-    double thetaIncrement = 2.0 * M_PI * Fc / Fs;
+    double thetaIncrement = M_PI_2 * Fc / Fs;
     
     for (UInt32 frame = 0; frame < frames; frame++) {
         buffer[frame] = sin(theta);
         theta += thetaIncrement;
-        theta = (theta > 2.0 * M_PI) ? 0 : theta;
+        theta = (theta > M_PI_2) ? 0 : theta;
     }
     
     return noErr;
