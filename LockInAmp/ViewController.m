@@ -111,7 +111,7 @@ float const indicatorYMargin = 40;
     double realVal = creal(val);
     double imaginaryVal = cimag(val);
     
-    // Calibrations
+    // Calibration to find narrow range of values. 2700 empiricaly set for our uses.
     if (calibrations < 2700) {
         oldMinI = MIN(oldMinI, imaginaryVal);
         oldMaxI = MAX(oldMaxI, imaginaryVal);
